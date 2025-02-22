@@ -18,12 +18,12 @@ function Index() {
         <p className="text-[#37474F]/70 text-center text-2xl mb-12">
           Enter your food details below
         </p>
-        
+
         <div className="space-y-8 bg-white/80 p-8 rounded-lg shadow-lg">
           <div className="space-y-6">
             <div className="space-y-2">
-              <label 
-                htmlFor="brand" 
+              <label
+                htmlFor="brand"
                 className="text-lg font-semibold text-[#37474F] block"
               >
                 Food Brand
@@ -35,10 +35,10 @@ function Index() {
                          placeholder:text-[#8D6E63]/60"
               />
             </div>
-            
+
             <div className="space-y-2">
-              <label 
-                htmlFor="foodName" 
+              <label
+                htmlFor="foodName"
                 className="text-lg font-semibold text-[#37474F] block"
               >
                 Food Name
@@ -51,11 +51,9 @@ function Index() {
               />
             </div>
           </div>
-          
+
           <div className="flex justify-center mt-8">
-            <Button 
-              className="bg-[#4CAF50] hover:bg-[#2E7D32] text-white px-8 py-2 text-lg"
-            >
+            <Button className="bg-[#4CAF50] hover:bg-[#2E7D32] text-white px-8 py-2 text-lg">
               Submit
             </Button>
           </div>
