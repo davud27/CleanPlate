@@ -10,7 +10,7 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/header'
+import { Route as rootRoute } from './routes/__root'
 import { Route as ResultsImport } from './routes/results'
 import { Route as BlogImport } from './routes/blog'
 import { Route as AboutImport } from './routes/about'
