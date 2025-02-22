@@ -254,7 +254,10 @@ function FoodItemCard({
               <Link
                 key={index}
                 to="/results"
-                search={{ food: alternative.id }}
+                search={{
+                  product: alternative.name,
+                  productBrand: alternative.id,
+                }}
                 className="block bg-blue-50 p-4 rounded-md transition-all hover:bg-blue-100"
               >
                 <h3 className="font-semibold text-blue-800">
