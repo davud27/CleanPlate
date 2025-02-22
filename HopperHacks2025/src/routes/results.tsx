@@ -103,6 +103,12 @@ const labelDefinitions = [
 ];
 
 export const Route = createFileRoute('/results')({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      product: String(search.product || ''),
+      productBrand: String(search.productBrand || '')
+    }
+  },
   component: RouteComponent,
 })
 
@@ -135,14 +141,18 @@ function LabelExplanations() {
   );
 }
 
-function FoodItemCard({ item }: { item: typeof foodItems[0] }) {
+function FoodItemCard({ item, productName, productBrand }: { 
+  item: typeof foodItems[0],
+  productName: string,
+  productBrand: string 
+}) {
   return (
     <div className="flex gap-8">
       {/* Left Sidebar */}
       <div className="w-1/3 space-y-6">
         <section className="bg-white/80 rounded-lg p-6 shadow-lg">
           <h1 className="text-4xl font-bold text-[#2E7D32] mb-2">
-            {item.name}
+            {productBrand} - {productName}
           </h1>
           <p className="text-[#37474F]/70 text-xl">
             Product Details
@@ -222,10 +232,31 @@ function FoodItemCard({ item }: { item: typeof foodItems[0] }) {
 }
 
 function RouteComponent() {
+  const search = Route.useSearch<typeof Route>();
+  const { product, productBrand } = search;
+
+  if (!product || !productBrand) {
+    return (
+      <div className="min-h-screen bg-[#FAF3E0] p-8">
+        <div className="max-w-4xl mx-auto space-y-8 pt-16">
+          <section className="text-center">
+            <h1 className="text-4xl font-bold text-[#2E7D32] mb-2">
+              No product selected
+            </h1>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#FAF3E0] p-8">
-      <div className="max-w-7xl mx-auto pt-16"> {/* Increased max-width */}
-        <FoodItemCard item={foodItems[0]} />
+      <div className="max-w-7xl mx-auto pt-16">
+        <FoodItemCard 
+          item={foodItems[0]} 
+          productName={product} 
+          productBrand={productBrand}
+        />
       </div>
     </div>
   );
