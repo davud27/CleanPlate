@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { AiChat } from '../components/AiChat';
 
 export const Route = createFileRoute("/about")({
   component: About,
 });
 
-function About() {
+export default function About() {
   return (
     <div className="min-h-screen bg-[#FAF3E0] p-8">
       <div className="max-w-4xl mx-auto space-y-12 pt-16">
@@ -42,6 +43,11 @@ function About() {
             and animal welfare. By choosing transparency, you're taking a step toward a cleaner, healthier, 
             and more ethical food system.
           </p>
+        </section>
+
+        <section>
+          <h2 className="text-3xl font-bold text-[#2E7D32] mb-4">AI Chat</h2>
+          <AiChat />
         </section>
       </div>
     </div>
