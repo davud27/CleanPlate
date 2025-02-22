@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Generated files
+routeTree.gen.ts
+*.gen.ts
+
+# Vite specific
+*.local
+.vite/
+vite.config.ts.timestamp-*
+
+# Optional: Development server
+dev-dist/
