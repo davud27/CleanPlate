@@ -1,10 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { debounce } from "lodash";
-import { SuggestionsDropdown } from "./SuggestionsDropdown";
-import { searchUSDA } from "@/lib/api";
 
 interface SearchFormProps {
   isLoading: boolean;
@@ -14,40 +11,9 @@ interface SearchFormProps {
 export function SearchForm({ isLoading, setIsLoading }: SearchFormProps) {
   const [foodBrand, setFoodBrand] = useState("");
   const [foodName, setFoodName] = useState("");
-  const [brandSuggestions, setBrandSuggestions] = useState<string[]>([]);
-  const [foodSuggestions, setFoodSuggestions] = useState<string[]>([]);
-  const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
-  const [showFoodSuggestions, setShowFoodSuggestions] = useState(false);
-  const navigate = useNavigate();
 
-  const debouncedSearch = useCallback(
-    debounce((query: string, type: "brand" | "food") => {
-      if (query.trim().length > 1) {
-        searchUSDA(
-          query,
-          type,
-          type === "brand" ? setBrandSuggestions : setFoodSuggestions
-        );
-      }
-    }, 250),
-    []
-  );
+Search]);
 
-  useEffect(() => {
-    if (foodBrand.trim().length > 2) {
-      debouncedSearch(foodBrand, "brand");
-    } else {
-      setBrandSuggestions([]);
-    }
-  }, [foodBrand, debouncedSearch]);
-
-  useEffect(() => {
-    if (foodName.trim().length > 2) {
-      debouncedSearch(foodName, "food");
-    } else {
-      setFoodSuggestions([]);
-    }
-  }, [foodName, debouncedSearch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,21 +129,6 @@ export function SearchForm({ isLoading, setIsLoading }: SearchFormProps) {
     }
   };
 
-  const handleSuggestionClick = (
-    suggestion: string,
-    type: "brand" | "food"
-  ) => {
-    if (type === "brand") {
-      setFoodBrand(suggestion);
-      setShowBrandSuggestions(false);
-      const foodNameInput = document.getElementById("foodName");
-      if (foodNameInput) foodNameInput.focus();
-    } else {
-      setFoodName(suggestion);
-      setShowFoodSuggestions(false);
-    }
-  };
-
   return (
     <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-white/20 dark:bg-gray-800 dark:border-gray-700">
       <form onSubmit={handleSubmit} autoComplete="off" className="space-y-8">
@@ -194,21 +145,10 @@ export function SearchForm({ isLoading, setIsLoading }: SearchFormProps) {
               id="brand"
               value={foodBrand}
               onChange={(e) => setFoodBrand(e.target.value)}
-              onFocus={() => setShowBrandSuggestions(true)}
-              onBlur={() =>
-                setTimeout(() => setShowBrandSuggestions(false), 200)
-              }
               placeholder="Enter food brand (e.g., Tyson)"
               required
               autoComplete="off"
               className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 dark:border-gray-700 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white dark:bg-gray-800 text-[#37474F] dark:text-gray-200 placeholder:text-[#8D6E63]/40 text-lg"
-            />
-            <SuggestionsDropdown
-              show={showBrandSuggestions}
-              suggestions={brandSuggestions}
-              onSuggestionClick={(suggestion) =>
-                handleSuggestionClick(suggestion, "brand")
-              }
             />
           </div>
 
@@ -224,21 +164,10 @@ export function SearchForm({ isLoading, setIsLoading }: SearchFormProps) {
               id="foodName"
               value={foodName}
               onChange={(e) => setFoodName(e.target.value)}
-              onFocus={() => setShowFoodSuggestions(true)}
-              onBlur={() =>
-                setTimeout(() => setShowFoodSuggestions(false), 200)
-              }
               placeholder="Enter food name (e.g., Chicken Nuggets)"
               required
               autoComplete="off"
               className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 dark:border-gray-700 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white dark:bg-gray-800 text-[#37474F] dark:text-gray-200 placeholder:text-[#8D6E63]/40 text-lg"
-            />
-            <SuggestionsDropdown
-              show={showFoodSuggestions}
-              suggestions={foodSuggestions}
-              onSuggestionClick={(suggestion) =>
-                handleSuggestionClick(suggestion, "food")
-              }
             />
           </div>
         </div>

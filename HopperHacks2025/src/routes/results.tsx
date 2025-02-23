@@ -1,52 +1,68 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { RisksSection } from "@/components/ProductAnalysis/RisksSection";
-import { BenefitsSection } from "@/components/ProductAnalysis/BenefitsSection";
-import { AlternativesSection } from "@/components/ProductAnalysis/AlternativesSection";
-import { ProductDetails } from "@/components/ProductAnalysis/ProductDetails";
-import { LabelExplanations } from "@/components/ProductAnalysis/LabelExplanations";
-import { NutritionLabel } from "@/components/ProductAnalysis/NutritionLabel";
-import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
 
-// Example data structure - this could come from an API or database
-const foodItems = {
-  risks: [
-    "Contains synthetic growth hormones",
-    "Animals were not raised on pasture",
-    "May contain traces of antibiotics",
-    "Includes artificial additives",
-  ],
-  benefits: [
-    "Free from synthetic pesticides and fertilizers",
-    "Produced without the use of hormones",
-    "Meets ethical animal welfare standards",
-  ],
-  alternatives: [
-    {
-      id: "brand-x-organic-milk",
-      name: "Brand X - Organic Whole Milk",
-      reason: "Certified Organic, no hormones, pasture-raised",
-    },
-    {
-      id: "brand-y-grassfed-milk",
-      name: "Brand Y - Grass-Fed Milk",
-      reason: "100% grass-fed, higher in nutrients, ethical farming",
-    },
-    {
-      id: "brand-z-pasture-milk",
-      name: "Brand Z - Pasture-Raised Dairy",
-      reason: "Humane certified, no antibiotics, sustainable practices",
-    },
-  ],
-};
 
 interface FoodData {
   foodInfo: any;
   nutritionInfo: any;
   certifications: any;
+}
+
+// Add these interfaces for type safety
+interface NutritionData {
+  product: {
+    name: string;
+    brand: string;
+    matched_product: string;
+  };
+  nutrition: {
+    serving_size: string;
+    calories: number;
+    fat: string;
+    saturated_fat: string;
+    trans_fat: string;
+    cholesterol: string;
+    sodium: string;
+    carbohydrates: string;
+    fiber: string;
+    sugar: string;
+    protein: string;
+  };
+  ingredients: string[];
+  allergens: string[];
+  dietary_info: {
+    vegan: boolean;
+    vegetarian: boolean;
+    gluten_free: boolean;
+    kosher: boolean;
+    halal: boolean;
+  };
+}
+
+interface SafetyData {
+  product: {
+    name: string;
+    brand: string;
+    matched_product: string;
+  };
+  analysis: {
+    contaminants: string[];
+    malpractices: string[];
+    healthConcerns: string[];
+    productionMethods: string[];
+    safetyRecord: string;
+  };
+}
+
+interface CertificationData {
+  product: {
+    name: string;
+    brand: string;
+    matched_product: string;
+  };
+  certifications: Array<{
+    name: string;
+    verified: boolean;
+    details: string;
+  }>;
 }
 
 export const Route = createFileRoute("/results")({
@@ -59,65 +75,12 @@ export const Route = createFileRoute("/results")({
   component: RouteComponent,
 });
 
-function RouteComponent() {
-  const { product, productBrand } = Route.useSearch();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [foodData, setFoodData] = useState<FoodData | null>(null);
 
-  useEffect(() => {
-    try {
-      const storedData = localStorage.getItem("foodData");
-
-      if (!storedData) {
-        console.error("No food data found in localStorage");
-        navigate({ to: "/" });
-        return;
-      }
-
-      const parsedData = JSON.parse(storedData);
-
-      // Validate the parsed data
-      if (
-        !parsedData.foodInfo ||
-        !parsedData.nutritionInfo ||
-        !parsedData.certifications
-      ) {
-        console.error("Invalid food data structure");
-        navigate({ to: "/" });
-        return;
-      }
-
-      setFoodData(parsedData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading food data:", error);
-      setError("Failed to load analysis results");
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  if (!product || !productBrand) {
-    return (
-      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold text-red-600">
-            No product selected
-          </h1>
-        </div>
       </div>
     );
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold text-[#2E7D32]">
-            Loading analysis...
-          </h1>
-        </div>
+
       </div>
     );
   }
