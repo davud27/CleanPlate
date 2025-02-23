@@ -1,6 +1,6 @@
 export function Features() {
   return (
-    <div className="grid md:grid-cols-3 gap-8 mt-20">
+    <div className="grid md:grid-cols-3 gap-8 mt-24">
       <FeatureCard
         emoji="🔍"
         title="Detailed Analysis"
@@ -28,7 +28,7 @@ interface FeatureCardProps {
 
 function FeatureCard({ emoji, title, description }: FeatureCardProps) {
   return (
-    <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+    <div className="bg-white/60 backdrop-blur-sm p-6 rounded-xl shadow-lg ">
       <div className="text-[#2E7D32] mb-4 text-2xl">{emoji}</div>
       <h3 className="text-xl font-semibold text-[#37474F] mb-2">{title}</h3>
       <p className="text-[#37474F]/70">{description}</p>
