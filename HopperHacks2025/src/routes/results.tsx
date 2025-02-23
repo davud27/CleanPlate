@@ -17,13 +17,13 @@ import React from "react";
 
 // Add this helper function
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const groupBy = <T extends Record<string, any>>(
+const groupBy = <T extends Record<string, unknown>>(
   array: T[],
   key: keyof T
 ): Record<string, T[]> => {
   return array.reduce(
     (result, item) => {
-      const group = item[key] || "Other"; // Use 'Other' as fallback category
+      const group = item[key] || "Other";
       result[group] = result[group] || [];
       result[group].push(item);
       return result;
@@ -68,7 +68,6 @@ const foodItems = [
   },
 ];
 
-// Add the labels data
 const labelDefinitions = [
   {
     label: "USDA Organic",
@@ -147,7 +146,6 @@ const labelDefinitions = [
   },
 ];
 
-// Update interfaces to match new API responses
 interface NutritionData {
   product: {
     name: string;
@@ -350,7 +348,6 @@ function CertificationSection({
       </div>
 
       <div className="space-y-6">
-        {/* Certification Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {certificationData.certification_education.relevant_certifications.map(
             (cert, index) => (
@@ -383,7 +380,6 @@ function CertificationSection({
                   />
                 </div>
 
-                {/* Expanded Requirements Section */}
                 {selectedCert === cert.name && (
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
                     <h4 className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
@@ -399,7 +395,6 @@ function CertificationSection({
           )}
         </div>
 
-        {/* Verification Guide */}
         <div className="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
             <Search className="text-blue-600 dark:text-blue-400" size={20} />
@@ -412,7 +407,6 @@ function CertificationSection({
           </p>
         </div>
 
-        {/* Disclaimer */}
         <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
           <p className="text-sm italic text-gray-600 dark:text-gray-400">
             {certificationData.certification_education.disclaimer}
@@ -423,7 +417,6 @@ function CertificationSection({
   );
 }
 
-// Add this component before FoodItemCard
 function ErrorState({ error, retry }: { error: string; retry: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
@@ -459,7 +452,6 @@ function FoodItemCard({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Add data validation helper
   const isValidSafetyData = (data: any): data is SafetyData => {
     return (
       data?.general_safety_info &&
@@ -485,10 +477,10 @@ function FoodItemCard({
   };
 
   useEffect(() => {
-    let isSubscribed = true; // Add this flag for cleanup
+    let isSubscribed = true;
 
     const fetchData = async () => {
-      if (!productName || !productBrand) return; // Don't fetch if no product info
+      if (!productName || !productBrand) return;
 
       setLoading(true);
       setError(null);
@@ -520,9 +512,7 @@ function FoodItemCard({
             certificationRes.json(),
           ]);
 
-        // Only update state if the component is still mounted
         if (isSubscribed) {
-          // Validate responses before setting state
           if (!isValidNutritionData(nutritionData)) {
             console.error("Invalid nutrition data format:", nutritionData);
             setError("Received invalid nutrition data format");
@@ -568,7 +558,6 @@ function FoodItemCard({
     };
   }, [productName, productBrand]); // Only these dependencies
 
-  // Update the safety section to only show concerns
   const renderSafetySection = () => {
     if (!safetyData?.general_safety_info) {
       return <div>No safety information available</div>;
@@ -622,22 +611,20 @@ function FoodItemCard({
         retry={() => {
           setError(null);
           setLoading(true);
-          fetchData(); // You'll need to extract the fetchData function from useEffect
+          fetchData();
         }}
       />
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fadeIn">
-      {/* Left Column */}
-      <div className="lg:col-span-1 space-y-6">
-        {/* Product Header Card */}
-        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-          <div className="space-y-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 animate-fadeIn">
+      <div className="lg:col-span-1 space-y-4 sm:space-y-6">
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-4 sm:p-6 shadow-lg">
+          <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center space-x-2">
-              <Star className="text-yellow-500" size={24} />
-              <h1 className="text-2xl font-bold text-[#2E7D32] dark:text-[#4CAF50]">
+              <Star className="text-yellow-500" size={20} />
+              <h1 className="text-xl sm:text-2xl font-bold text-[#2E7D32] dark:text-[#4CAF50] break-words">
                 {nutritionData?.product.name ||
                   `${productBrand} - ${productName}`}
               </h1>
@@ -653,7 +640,6 @@ function FoodItemCard({
           </div>
         </section>
 
-        {/* Safety Concerns Card */}
         <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-2 mb-6">
             <AlertTriangle className="text-amber-600" size={24} />
@@ -663,19 +649,15 @@ function FoodItemCard({
         </section>
       </div>
 
-      {/* Right Column */}
-      <div className="lg:col-span-2 space-y-6">
-        {/* Ethical Sourcing Information - Moved to top */}
+      <div className="lg:col-span-2 space-y-4 sm:space-y-6">
         {safetyData?.ethical_sourcing && (
           <EthicalSourcingSection ethicalData={safetyData.ethical_sourcing} />
         )}
 
-        {/* Certifications - Updated Component */}
         {certificationData && (
           <CertificationSection certificationData={certificationData} />
         )}
 
-        {/* Nutrition Facts Card */}
         <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-100 dark:border-gray-700">
           <h2 className="text-xl font-bold mb-4 pb-2 border-b-2 border-gray-200 dark:border-gray-700">
             Nutrition Facts
@@ -710,8 +692,6 @@ function FoodItemCard({
             </div>
           )}
         </section>
-
-        {/* Label Explanations - can be removed if redundant with new certification section */}
       </div>
     </div>
   );
@@ -721,7 +701,6 @@ function RouteComponent() {
   const search = Route.useSearch();
   const { product, productBrand } = search;
 
-  // Memoize the product info to prevent unnecessary re-renders
   const productInfo = React.useMemo(
     () => ({
       product,
@@ -765,9 +744,7 @@ export default function Results() {
           <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-4 transition-colors duration-200">
             Results
           </h1>
-          <div className="text-[#37474F] dark:text-gray-300 transition-colors duration-200">
-            {/* Results content */}
-          </div>
+          <div className="text-[#37474F] dark:text-gray-300 transition-colors duration-200"></div>
         </section>
       </div>
     </div>

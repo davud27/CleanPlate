@@ -12,13 +12,7 @@ export async function generateContent(prompt: string) {
     const response = await result.response;
     return response.text();
   } catch (error) {
-    console.error('Error generating content:', error);
+    console.error("Error generating content:", error);
     throw error;
   }
 }
-
-// For chat conversations
-export async function startChat() {
-  const chat = model.startChat();
-  return chat;
-} 

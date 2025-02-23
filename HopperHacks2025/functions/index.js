@@ -2,41 +2,23 @@
 /* eslint-disable quote-props */
 /* eslint-disable max-len */
 /* eslint-disable indent */
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-const functions = require("firebase-functions");
-const axios = require("axios");
+
 const { onRequest } = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const cors = require("cors")({ origin: true });
 
 // Initialize Gemini with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-// Helper function to clean and parse AI response
 const parseAIResponse = (response) => {
   try {
     const rawText = response.text();
-
-    // Remove any markdown code blocks, backticks, and normalize whitespace
     const cleanText = rawText
       .replace(/```json\n|```\n|```/g, "")
       .replace(/^\s+|\s+$/g, "")
       .replace(/\n/g, " ")
       .replace(/\s+/g, " ");
 
-    // Parse and validate the JSON structure
     const parsed = JSON.parse(cleanText);
-
-    // Ensure all required fields are present
     if (
       !parsed.product ||
       !parsed.product.name ||
@@ -45,7 +27,6 @@ const parseAIResponse = (response) => {
     ) {
       throw new Error("Missing required product fields");
     }
-
     return parsed;
   } catch (error) {
     console.error("Raw response:", response.text());
@@ -53,7 +34,6 @@ const parseAIResponse = (response) => {
   }
 };
 
-// Generic function to handle AI requests
 const handleAIRequest = async (prompt, res) => {
   try {
     const result = await model.generateContent(prompt);
@@ -223,7 +203,6 @@ The response MUST:
   return handleAIRequest(prompt, res);
 });
 
-// Debug endpoint for testing prompts
 exports.debugAI = onRequest({ cors: true }, async (req, res) => {
   const { prompt } = req.query;
 
