@@ -8,7 +8,7 @@ export const Route = createFileRoute("/blog")({
 const blogPosts = [
   {
     title: "Understanding Food Labels and Making Informed Choices",
-    date: "March 15, 2024",
+    date: "May 15, 2021",
     summary: "Learn how to interpret food labels and make informed decisions about your food purchases. Research shows that consumers increasingly value transparency in food labeling.",
     link: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8156633/",
     readTime: "6 min read",
@@ -24,7 +24,7 @@ const blogPosts = [
   },
   {
     title: "Why GMOs Raise Concerns: A Comprehensive Look",
-    date: "March 10, 2024",
+    date: "-----",
     summary: "Explore the environmental and health implications of GMOs in our food system, and why many consumers are choosing non-GMO alternatives for their families.",
     link: "https://www.nongmoproject.org/blog/whats-wrong-with-gmos-a-lot/",
     readTime: "7 min read",
@@ -32,7 +32,7 @@ const blogPosts = [
   },
   {
     title: "The Benefits of Pasture-Raised Animals",
-    date: "March 8, 2024",
+    date: "Fall 2003",
     summary: "Discover why pasture-raised animals produce healthier meat and dairy products, with higher levels of beneficial nutrients like omega-3 fatty acids and vitamins.",
     link: "https://www.mofga.org/resources/pasture/pasture/",
     readTime: "8 min read",
@@ -40,7 +40,7 @@ const blogPosts = [
   },
   {
     title: "Why 100% Grass-Fed Beef Matters",
-    date: "March 5, 2024",
+    date: "------",
     summary: "Learn about the three main benefits of choosing 100% grass-fed beef: humane treatment of animals, environmental sustainability, and superior nutritional value.",
     link: "https://foxhollow.com/blogs/blog/why-100-grassfed-matters",
     readTime: "5 min read",

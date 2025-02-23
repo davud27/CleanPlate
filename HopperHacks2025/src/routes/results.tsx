@@ -259,6 +259,14 @@ function FoodItemCard({
                 <span>235mg 6%</span>
               </div>
             </div>
+
+            {/* Added Ingredients Section */}
+            <div className="border-t pt-4 mt-4">
+              <p className="font-bold text-lg mb-2">Ingredients</p>
+              <p className="text-sm leading-relaxed text-[#37474F]">
+                Organic Grade A Milk, Vitamin D3, Vitamin A Palmitate, Organic Valley Pasteurized Milk, Organic Valley Homogenized Milk, Organic Valley Whole Milk, Organic Valley Cream, Organic Valley Skim Milk, Organic Valley Nonfat Milk, Organic Valley Low-Fat Milk, Organic Valley 2% Milk, Organic Valley 1% Milk, Organic Valley Half & Half, Organic Valley Heavy Cream, Organic Valley Light Cream, Organic Valley Buttermilk, Organic Valley Sour Cream, Organic Valley Yogurt, Organic Valley Butter, Organic Valley Cheese, Organic Valley Ice Cream
+              </p>
+            </div>
           </div>
         </section>
       </div>
@@ -314,7 +322,7 @@ function FoodItemCard({
           <div className="flex items-center gap-2 mb-4">
             <Star className="text-yellow-500" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">
-              Better Alternatives
+              Recommended Alternatives
             </h2>
           </div>
           <ul className="space-y-4">
