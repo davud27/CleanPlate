@@ -196,45 +196,47 @@ function FoodItemCard({
 
         {/* Nutrition Label */}
         <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
-          <h2 className="text-xl font-bold text-[#37474F] dark:text-gray-300 mb-4 border-b-2 pb-2">Nutrition Facts</h2>
+          <h2 className="text-xl font-bold text-[#37474F] dark:text-gray-300 mb-4 border-b-2 border-[#37474F] dark:border-gray-300 pb-2">
+            Nutrition Facts
+          </h2>
           <div className="space-y-4">
-            <div className="border-b pb-2">
-              <p className="font-bold">Serving Size 1 cup (228g)</p>
-              <p className="font-bold">Servings Per Container 4</p>
+            <div className="border-b border-[#37474F] dark:border-gray-300 pb-2">
+              <p className="font-bold text-[#37474F] dark:text-gray-300">Serving Size 1 cup (228g)</p>
+              <p className="font-bold text-[#37474F] dark:text-gray-300">Servings Per Container 4</p>
             </div>
             
             <div className="space-y-2">
-              <div className="border-b pb-1">
-                <p className="font-bold text-lg">Amount Per Serving</p>
-                <div className="flex justify-between">
+              <div className="border-b border-[#37474F] dark:border-gray-300 pb-1">
+                <p className="font-bold text-lg text-[#37474F] dark:text-gray-300">Amount Per Serving</p>
+                <div className="flex justify-between text-[#37474F] dark:text-gray-300">
                   <span className="font-bold">Calories</span>
                   <span>250</span>
                 </div>
               </div>
 
-              <div className="border-b pb-1">
-                <div className="flex justify-between">
+              <div className="border-b border-[#37474F] dark:border-gray-300 pb-1">
+                <div className="flex justify-between text-[#37474F] dark:text-gray-300">
                   <span>Total Fat</span>
                   <span>8g</span>
                 </div>
               </div>
 
-              <div className="border-b pb-1">
-                <div className="flex justify-between">
+              <div className="border-b border-[#37474F] dark:border-gray-300 pb-1">
+                <div className="flex justify-between text-[#37474F] dark:text-gray-300">
                   <span>Sodium</span>
                   <span>620mg</span>
                 </div>
               </div>
 
-              <div className="border-b pb-1">
-                <div className="flex justify-between">
+              <div className="border-b border-[#37474F] dark:border-gray-300 pb-1">
+                <div className="flex justify-between text-[#37474F] dark:text-gray-300">
                   <span>Total Carbohydrate</span>
                   <span>37g</span>
                 </div>
               </div>
 
-              <div className="border-b pb-1">
-                <div className="flex justify-between">
+              <div className="border-b border-[#37474F] dark:border-gray-300 pb-1">
+                <div className="flex justify-between text-[#37474F] dark:text-gray-300">
                   <span>Protein</span>
                   <span>8g</span>
                 </div>
@@ -242,29 +244,29 @@ function FoodItemCard({
             </div>
 
             <div className="text-sm space-y-1">
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-[#37474F] dark:border-gray-300 pb-1 text-[#37474F] dark:text-gray-300">
                 <span>Vitamin D</span>
                 <span>2mcg 10%</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-[#37474F] dark:border-gray-300 pb-1 text-[#37474F] dark:text-gray-300">
                 <span>Calcium</span>
                 <span>260mg 20%</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-[#37474F] dark:border-gray-300 pb-1 text-[#37474F] dark:text-gray-300">
                 <span>Iron</span>
                 <span>4.5mg 25%</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between border-b border-[#37474F] dark:border-gray-300 pb-1 text-[#37474F] dark:text-gray-300">
                 <span>Potassium</span>
                 <span>235mg 6%</span>
               </div>
             </div>
 
             {/* Added Ingredients Section */}
-            <div className="border-t pt-4 mt-4">
-              <p className="font-bold text-lg mb-2">Ingredients</p>
+            <div className="border-t border-[#37474F] dark:border-gray-300 pt-4 mt-4">
+              <p className="font-bold text-lg mb-2 text-[#37474F] dark:text-gray-300">Ingredients</p>
               <p className="text-sm leading-relaxed text-[#37474F] dark:text-gray-300">
-                Organic Grade A Milk, Vitamin D3, Vitamin A Palmitate, Organic Valley Pasteurized Milk, Organic Valley Homogenized Milk, Organic Valley Whole Milk, Organic Valley Cream, Organic Valley Skim Milk, Organic Valley Nonfat Milk, Organic Valley Low-Fat Milk, Organic Valley 2% Milk, Organic Valley 1% Milk, Organic Valley Half & Half, Organic Valley Heavy Cream, Organic Valley Light Cream, Organic Valley Buttermilk, Organic Valley Sour Cream, Organic Valley Yogurt, Organic Valley Butter, Organic Valley Cheese, Organic Valley Ice Cream
+                Organic Grade A Milk, Vitamin D3, Vitamin A Palmitate
               </p>
             </div>
           </div>
