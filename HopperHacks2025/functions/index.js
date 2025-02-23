@@ -118,7 +118,7 @@ exports.analyzeFoodProduct = onRequest({ cors: true }, async (req, res) => {
       ],
       "allergens": [
         "list all major allergens present"
-      ],
+      ]
       "dietary_info": {
         "vegan": boolean,
         "vegetarian": boolean,
@@ -131,9 +131,9 @@ exports.analyzeFoodProduct = onRequest({ cors: true }, async (req, res) => {
     furthermore, if either the brand name or food name has no result, look for similar that may have resulted from a misspelling or misformatting
     take the name of the brand in account for the name of the food as well`;
 
-
     const result = await model.generateContent(prompt);
     const response = await result.response;
+    
 
     // Clean the response
     const text = response
@@ -234,8 +234,9 @@ Format the output as follows:
 }
 
 Be factual and specific. Do not include markdown, code blocks, backticks, or explanations.
-
-If there are no results for either the brand name or food name, search for similar names that may have resulted from misspellings or formatting errors, considering both the brand and food names in your search.`
+ensure you list each certification with a boolean value according to the format detailed above, include both true and false values.
+If there are no results for either the brand name or food name, search for similar names that may have resulted from misspellings or formatting errors, 
+considering both the brand and food names in your search.`
 
             /*
     const prompt = `Return ONLY a raw JSON object analyzing certifications for ${foodName} by ${foodBrand}.
