@@ -24,18 +24,29 @@ const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 // Helper function to clean and parse AI response
 const parseAIResponse = (response) => {
   try {
-    // First get the raw text
     const rawText = response.text();
 
     // Remove any markdown code blocks, backticks, and normalize whitespace
     const cleanText = rawText
-      .replace(/```json\n|```\n|```/g, "") // Remove code block markers
-      .replace(/^\s+|\s+$/g, "") // Trim whitespace
-      .replace(/\n/g, " ") // Replace newlines with spaces
-      .replace(/\s+/g, " "); // Normalize spaces
+      .replace(/```json\n|```\n|```/g, "")
+      .replace(/^\s+|\s+$/g, "")
+      .replace(/\n/g, " ")
+      .replace(/\s+/g, " ");
 
-    // Attempt to parse the cleaned JSON
-    return JSON.parse(cleanText);
+    // Parse and validate the JSON structure
+    const parsed = JSON.parse(cleanText);
+
+    // Ensure all required fields are present
+    if (
+      !parsed.product ||
+      !parsed.product.name ||
+      !parsed.product.brand ||
+      !parsed.product.category
+    ) {
+      throw new Error("Missing required product fields");
+    }
+
+    return parsed;
   } catch (error) {
     console.error("Raw response:", response.text());
     throw new Error(`Failed to parse AI response: ${error.message}`);
@@ -66,31 +77,48 @@ exports.getFoodInfo = onRequest({ cors: true }, async (req, res) => {
     return res.status(400).json({ error: "Missing food name or brand." });
   }
 
-  const prompt = `You are a precise JSON generator focused on food safety. For ${foodName} by ${foodBrand}, search reputable sources like FDA.gov, USDA.gov, and FoodSafety.gov for real safety information. Always return data - use "N/A" if information is unavailable. Generate a single, valid JSON object. Format must be exactly:
-  {
-    "product":{
-      "name":"${foodName}",
-      "brand":"${foodBrand}",
-      "matched_product":"[Exact match or closest similar product or 'N/A']"
-    },
-    "analysis":{
-      "contaminants":[
-        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
-      ],
-      "malpractices":[
-        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
-      ],
-      "healthConcerns":[
-        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
-      ],
-      "productionMethods":[
-        {"method":"[Method or 'N/A']","impact":"[Impact or 'N/A']","source":"[Source or 'N/A']"}
-      ],
-      "safetyRecord":"[Safety record summary or 'No significant safety records found']"
-    }
+  const prompt = `You are a food safety database. For ${foodBrand}'s ${foodName}, provide safety and ethical sourcing information in EXACTLY the following JSON format. Every field is required and must follow these specific formatting rules:
+
+{
+  "product": {
+    "name": "${foodName}",
+    "brand": "${foodBrand}",
+    "category": "[Must be one of: Dairy, Meat, Produce, Grains, Beverages, Snacks, Condiments, or Prepared Foods]"
+  },
+  "general_safety_info": {
+    "storage_guidelines": "[Must start with temperature requirements, followed by storage location, then duration. Example: 'Store at 40°F or below in refrigerator for up to 7 days']",
+    "handling_tips": "[Must list 2-3 specific handling instructions in comma-separated format. Example: 'Wash hands before handling, use clean utensils, avoid cross-contamination']",
+    "common_concerns": [
+      {
+        "concern": "[Must be a specific safety issue, not general advice. Example: 'Risk of Listeria contamination']",
+        "explanation": "[Must explain why the concern exists and how to mitigate it in 1-2 sentences]"
+      }
+    ],
+    "disclaimer": "[Must include the phrase 'This information is for general guidance only' and mention consulting official guidelines]"
+  },
+  "ethical_sourcing": {
+    "sourcing_practices": "[Must describe specific sourcing methods and locations in 1-2 sentences]",
+    "sustainability_initiatives": "[Must list concrete environmental or social initiatives, not vague claims]",
+    "controversies": [
+      {
+        "year": "[Must be a specific year, 'Ongoing', or 'Past']",
+        "issue": "[Must describe a specific controversy in 1-2 sentences]",
+        "resolution": "[Must state current status: 'Resolved', 'In Progress', or 'No Resolution']"
+      }
+    ],
+    "ethical_certifications": "[Must list specific certifications or explicitly state 'No known certifications']",
+    "disclaimer": "[Must include the phrase 'Information based on publicly available data' and mention potential updates]"
   }
-  
-  IMPORTANT: Never return empty arrays. If no information is found for a category, include one item with 'N/A' values. Always provide at least one entry for each array with either real information or placeholder 'N/A' values. Response must be valid JSON only.`;
+}
+
+The response MUST:
+1. Include ALL fields exactly as shown above
+2. Follow the specific formatting rules for each field
+3. Use proper JSON formatting with no markdown
+4. Include at least one item in common_concerns
+5. Include at least one item in controversies
+6. Use consistent language and tone throughout
+7. Avoid vague or non-specific statements`;
 
   return handleAIRequest(prompt, res);
 });
@@ -103,38 +131,36 @@ exports.analyzeFoodProduct = onRequest({ cors: true }, async (req, res) => {
     return res.status(400).json({ error: "Missing food name or brand." });
   }
 
-  const prompt = `You are a precise JSON generator with access to Nutritionix database (nutritionix.com). For ${foodName} by ${foodBrand}, generate a single, valid JSON object. Always return data - use "N/A" for unknown values and "0" for unknown numbers. Format must be exactly:
-  {
-    "product":{
-      "name":"${foodName}",
-      "brand":"${foodBrand}",
-      "matched_product":"[Exact match or closest similar product or 'N/A']"
-    },
-    "nutrition":{
-      "serving_size":"[Size or 'N/A']",
-      "calories":[Number or 0],
-      "fat":"[Amount or 'N/A']",
-      "saturated_fat":"[Amount or 'N/A']",
-      "trans_fat":"[Amount or 'N/A']",
-      "cholesterol":"[Amount or 'N/A']",
-      "sodium":"[Amount or 'N/A']",
-      "carbohydrates":"[Amount or 'N/A']",
-      "fiber":"[Amount or 'N/A']",
-      "sugar":"[Amount or 'N/A']",
-      "protein":"[Amount or 'N/A']"
-    },
-    "ingredients":["[At least one ingredient or 'Ingredients not available']"],
-    "allergens":["[At least one allergen or 'No allergen information available']"],
-    "dietary_info":{
-      "vegan":[true/false],
-      "vegetarian":[true/false],
-      "gluten_free":[true/false],
-      "kosher":[true/false],
-      "halal":[true/false]
-    }
+  const prompt = `You are a nutrition database. For ${foodBrand}'s ${foodName}, provide nutritional information in EXACTLY the following JSON format. Every field is required and must follow these specific formatting rules:
+
+{
+  "product": {
+    "name": "${foodName}",
+    "brand": "${foodBrand}",
+    "category": "[Must be one of: Dairy, Meat, Produce, Grains, Beverages, Snacks, Condiments, or Prepared Foods]"
+  },
+  "general_nutrition_info": {
+    "typical_nutrients": "[Must list nutrients in format: 'Nutrient: Amount per serving'. Example: 'Protein: 5g per serving, Fat: 2g per serving']",
+    "nutritional_benefits": "[Must list 2-3 specific health benefits with scientific basis]",
+    "considerations": "[Must include specific dietary considerations or restrictions]"
+  },
+  "common_ingredients": {
+    "typical_ingredients": "[Must list ingredients in order of predominance, comma-separated]",
+    "common_allergens": "[Must list specific allergens or explicitly state 'No common allergens']"
+  },
+  "dietary_considerations": {
+    "general_suitability": "[Must specify suitability for common diets: vegan, vegetarian, gluten-free, etc.]",
+    "disclaimer": "[Must include the phrase 'Nutritional content may vary' and mention consulting product packaging]"
   }
-  
-  IMPORTANT: Never return empty arrays. Arrays must contain at least one item, even if it's just a placeholder message. All fields must have a value - use 'N/A' for unknown text, 0 for unknown numbers, and false for unknown booleans. Response must be valid JSON only.`;
+}
+
+The response MUST:
+1. Include ALL fields exactly as shown above
+2. Follow the specific formatting rules for each field
+3. Use proper JSON formatting with no markdown
+4. Use consistent measurements (g, mg, mcg) throughout
+5. Include specific quantities where applicable
+6. Avoid vague or non-specific statements`;
 
   return handleAIRequest(prompt, res);
 });
@@ -147,78 +173,52 @@ exports.getFoodCertifications = onRequest({ cors: true }, async (req, res) => {
     return res.status(400).json({ error: "Missing food name or brand." });
   }
 
-  const prompt = `You are a precise JSON generator focused on food certifications. For ${foodName} by ${foodBrand}, search for official certifications and generate a single, valid JSON object. Format must be exactly:
-  {
-    "product": {
-      "name": "${foodName}",
-      "brand": "${foodBrand}",
-      "matched_product": "[Exact match or closest similar product or 'N/A']"
-    },
-    "certifications": [
+  const prompt = `You are a food certification database. For ${foodBrand}'s ${foodName}, provide certification information in EXACTLY the following JSON format. Every field is required and must follow these specific formatting rules:
+
+{
+  "product": {
+    "name": "${foodName}",
+    "brand": "${foodBrand}",
+    "category": "[Must be one of: Dairy, Meat, Produce, Grains, Beverages, Snacks, Condiments, or Prepared Foods]"
+  },
+  "certification_education": {
+    "relevant_certifications": [
       {
-        "name": "[Certification name]",
-        "verified": [true/false],
-        "details": "[Verification details or 'Not certified']",
-        "category": "[One of: Organic, Safety, Quality, Ethical, Dietary, Environmental, Animal Welfare]",
-        "verifying_body": "[Organization name or 'N/A']"
+        "name": "[Must be exactly one of the approved certifications listed below]",
+        "description": "[Must explain what the certification means in 1-2 sentences]",
+        "typical_requirements": "[Must list 2-3 specific requirements for obtaining this certification]"
       }
-    ]
+    ],
+    "how_to_verify": "[Must include specific steps to verify authenticity, including where to look on packaging]",
+    "disclaimer": "[Must include the phrase 'Certification status may change' and mention verifying current status]"
   }
+}
 
-  Search specifically for these certifications:
-  
-  Organic Certifications:
-  - USDA Organic
-  - EU Organic
-  - Canada Organic
-  - JAS Organic (Japan)
-  - Bio Suisse
-  - Demeter
-  
-  Safety & Quality:
-  - HACCP
-  - GFSI
-  - SQF
-  - BRCGS
-  - ISO 22000
-  - FSSC 22000
-  - USDA Grade A/B
-  
-  Sustainability & Ethical:
-  - Rainforest Alliance
-  - Fair Trade Certified
-  - Food Justice Certified
-  - Regenerative Organic
-  
-  Animal & Marine:
-  - Certified Humane
-  - Animal Welfare Approved
-  - Marine Stewardship Council (MSC)
-  - Aquaculture Stewardship Council (ASC)
-  
-  Dietary & Allergen:
-  - Non-GMO Project Verified
-  - Gluten-Free (GFCO)
-  - Whole30 Approved
-  - Kosher (OU, Star-K, etc.)
-  - Halal (IFANCA, etc.)
-  - Paleo Certified
-  - Vegan Certified
-  
-  Product-Specific:
-  - A2 Milk Certified
-  - Real California Milk
+Approved certifications MUST be exactly one of:
+- USDA Organic
+- Non-GMO Project Verified
+- Cage-Free
+- Free-Range
+- Pasture-Raised
+- Certified Humane
+- Fair Trade Certified
+- Grass-Fed
+- No Added Hormones
+- rBST-Free
+- Vegan Certified
+- Gluten-Free Certified
+- Kosher
+- Halal
+- Regenerative Organic Certified
 
-  IMPORTANT RULES:
-  1. Always include at least one certification in the array
-  2. If no certifications found, include {"name": "No certifications found", "verified": false, "details": "No verified certifications available", "category": "N/A", "verifying_body": "N/A"}
-  3. For each found certification, verify against official certification databases where possible
-  4. Include specific verifying body names when available
-  5. Set verified=true only when there's concrete evidence of current certification
-  6. Response must be valid JSON only
-  7. Never return empty arrays
-
-  Focus on current, verifiable certifications from official sources only. No speculation.`;
+The response MUST:
+1. Include ALL fields exactly as shown above
+2. Follow the specific formatting rules for each field
+3. Use proper JSON formatting with no markdown
+4. Include at least one certification
+5. Use exact certification names from the approved list
+6. Provide specific, verifiable information
+7. Maintain consistent language and tone throughout`;
 
   return handleAIRequest(prompt, res);
 });
