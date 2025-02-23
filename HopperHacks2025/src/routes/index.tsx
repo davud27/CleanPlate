@@ -100,7 +100,7 @@ function Index() {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
+                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer"
               >
                 Analyze Food
               </Button>

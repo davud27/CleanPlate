@@ -183,7 +183,7 @@ function FoodItemCard({
     <div className="flex gap-8 animate-fadeIn">
       {/* Left Sidebar */}
       <div className="w-1/3 space-y-6 animate-slideIn">
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:animate-glowPulse">
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg">
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] animate-rainbow">
             {productBrand} - {productName}
           </h1>
@@ -191,6 +191,74 @@ function FoodItemCard({
           {/* Image placeholder */}
           <div className="mt-6 aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
             <p className="text-gray-500">Product Image</p>
+          </div>
+        </section>
+
+        {/* Nutrition Label */}
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg">
+          <h2 className="text-xl font-bold text-[#37474F] mb-4 border-b-2 pb-2">Nutrition Facts</h2>
+          <div className="space-y-4">
+            <div className="border-b pb-2">
+              <p className="font-bold">Serving Size 1 cup (228g)</p>
+              <p className="font-bold">Servings Per Container 4</p>
+            </div>
+            
+            <div className="space-y-2">
+              <div className="border-b pb-1">
+                <p className="font-bold text-lg">Amount Per Serving</p>
+                <div className="flex justify-between">
+                  <span className="font-bold">Calories</span>
+                  <span>250</span>
+                </div>
+              </div>
+
+              <div className="border-b pb-1">
+                <div className="flex justify-between">
+                  <span>Total Fat</span>
+                  <span>8g</span>
+                </div>
+              </div>
+
+              <div className="border-b pb-1">
+                <div className="flex justify-between">
+                  <span>Sodium</span>
+                  <span>620mg</span>
+                </div>
+              </div>
+
+              <div className="border-b pb-1">
+                <div className="flex justify-between">
+                  <span>Total Carbohydrate</span>
+                  <span>37g</span>
+                </div>
+              </div>
+
+              <div className="border-b pb-1">
+                <div className="flex justify-between">
+                  <span>Protein</span>
+                  <span>8g</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-sm space-y-1">
+              <div className="flex justify-between">
+                <span>Vitamin D</span>
+                <span>2mcg 10%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Calcium</span>
+                <span>260mg 20%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Iron</span>
+                <span>4.5mg 25%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Potassium</span>
+                <span>235mg 6%</span>
+              </div>
+            </div>
           </div>
         </section>
       </div>
