@@ -17,290 +17,229 @@ const logger = require("firebase-functions/logger");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const cors = require("cors")({ origin: true });
 
-// Initialize Gemini with your API key from Firebase config
+// Initialize Gemini with API key
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-exports.getFoodInfo = onRequest({ cors: true }, async (req, res) => {
+// Helper function to clean and parse AI response
+const parseAIResponse = (response) => {
   try {
-    const { foodName, foodBrand } = req.query;
+    // First get the raw text
+    const rawText = response.text();
 
-    if (!foodName || !foodBrand) {
-      return res.status(400).json({ error: "Missing food name or brand." });
-    }
+    // Remove any markdown code blocks, backticks, and normalize whitespace
+    const cleanText = rawText
+      .replace(/```json\n|```\n|```/g, "") // Remove code block markers
+      .replace(/^\s+|\s+$/g, "") // Trim whitespace
+      .replace(/\n/g, " ") // Replace newlines with spaces
+      .replace(/\s+/g, " "); // Normalize spaces
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const prompt = `Return ONLY a raw JSON object analyzing ${foodName} by ${foodBrand}. 
-      Include details about:
-      - Known contaminants (any harmful substances found in production or final product)
-      - Production malpractices (documented issues with manufacturing or handling)
-      - Health concerns (specific health risks associated with consumption)
-      - Production methods (how the product is made, including industrial processes)
-      - Safety record (history of recalls, violations, or safety issues)
-      
-      Format as:
-      {
-        "product": {
-          "name": "${foodName}",
-          "brand": "${foodBrand}"
-        },
-        "analysis": {
-          "contaminants": ["list specific contaminants found"],
-          "malpractices": ["list specific documented malpractices"],
-          "healthConcerns": ["list specific health risks"],
-          "productionMethods": ["list specific production steps and methods"],
-          "safetyRecord": "detailed safety history including dates and incidents"
-        }
-      }
-      Be factual and specific. No markdown, no code blocks, no backticks, no explanation.
-      furthermore, if either the brand name or food name has no result, look for similar that may have resulted from a misspelling or misformatting
-      take the name of the brand in account for the name of the food as well`;
+    // Attempt to parse the cleaned JSON
+    return JSON.parse(cleanText);
+  } catch (error) {
+    console.error("Raw response:", response.text());
+    throw new Error(`Failed to parse AI response: ${error.message}`);
+  }
+};
 
+// Generic function to handle AI requests
+const handleAIRequest = async (prompt, res) => {
+  try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
-
-    // Clean the response
-    const text = response
-      .text()
-      .replace(/```json\n|```/g, "")
-      .replace(/\n/g, "")
-      .trim();
-
-    try {
-      const parsed = JSON.parse(text);
-      return res.json(parsed);
-    } catch (parseError) {
-      console.error("Raw text received:", text);
-      return res.status(500).json({
-        error: "Failed to parse AI response",
-        details: parseError.message,
-      });
-    }
+    const parsed = parseAIResponse(response);
+    return res.json(parsed);
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
-      error: "Failed to fetch data",
+      error: "Request failed",
       details: error.message,
     });
   }
+};
+
+// Endpoint for food safety information
+exports.getFoodInfo = onRequest({ cors: true }, async (req, res) => {
+  const { foodName, foodBrand } = req.query;
+
+  if (!foodName || !foodBrand) {
+    return res.status(400).json({ error: "Missing food name or brand." });
+  }
+
+  const prompt = `You are a precise JSON generator focused on food safety. For ${foodName} by ${foodBrand}, search reputable sources like FDA.gov, USDA.gov, and FoodSafety.gov for real safety information. Always return data - use "N/A" if information is unavailable. Generate a single, valid JSON object. Format must be exactly:
+  {
+    "product":{
+      "name":"${foodName}",
+      "brand":"${foodBrand}",
+      "matched_product":"[Exact match or closest similar product or 'N/A']"
+    },
+    "analysis":{
+      "contaminants":[
+        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
+      ],
+      "malpractices":[
+        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
+      ],
+      "healthConcerns":[
+        {"issue":"[Issue or 'N/A']","source":"[Source or 'N/A']","summary":"[One-sentence summary or 'No reported issues found']"}
+      ],
+      "productionMethods":[
+        {"method":"[Method or 'N/A']","impact":"[Impact or 'N/A']","source":"[Source or 'N/A']"}
+      ],
+      "safetyRecord":"[Safety record summary or 'No significant safety records found']"
+    }
+  }
+  
+  IMPORTANT: Never return empty arrays. If no information is found for a category, include one item with 'N/A' values. Always provide at least one entry for each array with either real information or placeholder 'N/A' values. Response must be valid JSON only.`;
+
+  return handleAIRequest(prompt, res);
 });
 
+// Endpoint for nutritional analysis
 exports.analyzeFoodProduct = onRequest({ cors: true }, async (req, res) => {
-  try {
-    const { foodName, foodBrand } = req.query;
+  const { foodName, foodBrand } = req.query;
 
-    if (!foodName || !foodBrand) {
-      return res.status(400).json({ error: "Missing food name or brand" });
-    }
-
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const prompt = `Return ONLY a raw JSON object analyzing ${foodName} by ${foodBrand}. 
-    Format the response as:
-    {
-      "product": {
-        "name": "${foodName}",
-        "brand": "${foodBrand}"
-      },
-      "nutrition": {
-        "serving_size": "exact serving size with grams",
-        "calories": number,
-        "fat": "grams with % daily value",
-        "saturated_fat": "grams with % daily value",
-        "trans_fat": "grams",
-        "cholesterol": "mg with % daily value",
-        "sodium": "mg with % daily value",
-        "carbohydrates": "grams with % daily value",
-        "fiber": "grams with % daily value",
-        "sugar": "grams",
-        "protein": "grams"
-      },
-      "ingredients": [
-        "list all ingredients in order of predominance"
-      ],
-      "allergens": [
-        "list all major allergens present"
-      ],
-      "dietary_info": {
-        "vegan": boolean,
-        "vegetarian": boolean,
-        "gluten_free": boolean,
-        "kosher": boolean,
-        "halal": boolean
-      }
-    }
-    Be specific and accurate. No markdown, no code blocks, no backticks, no explanation. 
-    furthermore, if either the brand name or food name has no result, look for similar that may have resulted from a misspelling or misformatting
-    take the name of the brand in account for the name of the food as well`;
-
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-
-    // Clean the response
-    const text = response
-      .text()
-      .replace(/```json\n|```/g, "")
-      .replace(/\n/g, "")
-      .trim();
-
-    try {
-      const parsed = JSON.parse(text);
-      return res.json(parsed);
-    } catch (parseError) {
-      console.error("Raw text received:", text);
-      return res.status(500).json({
-        error: "Failed to parse AI response",
-        details: parseError.message,
-      });
-    }
-  } catch (error) {
-    console.error("Error analyzing food:", error);
-    return res.status(500).json({
-      error: "Failed to analyze food product",
-      details: error.message,
-    });
+  if (!foodName || !foodBrand) {
+    return res.status(400).json({ error: "Missing food name or brand." });
   }
+
+  const prompt = `You are a precise JSON generator with access to Nutritionix database (nutritionix.com). For ${foodName} by ${foodBrand}, generate a single, valid JSON object. Always return data - use "N/A" for unknown values and "0" for unknown numbers. Format must be exactly:
+  {
+    "product":{
+      "name":"${foodName}",
+      "brand":"${foodBrand}",
+      "matched_product":"[Exact match or closest similar product or 'N/A']"
+    },
+    "nutrition":{
+      "serving_size":"[Size or 'N/A']",
+      "calories":[Number or 0],
+      "fat":"[Amount or 'N/A']",
+      "saturated_fat":"[Amount or 'N/A']",
+      "trans_fat":"[Amount or 'N/A']",
+      "cholesterol":"[Amount or 'N/A']",
+      "sodium":"[Amount or 'N/A']",
+      "carbohydrates":"[Amount or 'N/A']",
+      "fiber":"[Amount or 'N/A']",
+      "sugar":"[Amount or 'N/A']",
+      "protein":"[Amount or 'N/A']"
+    },
+    "ingredients":["[At least one ingredient or 'Ingredients not available']"],
+    "allergens":["[At least one allergen or 'No allergen information available']"],
+    "dietary_info":{
+      "vegan":[true/false],
+      "vegetarian":[true/false],
+      "gluten_free":[true/false],
+      "kosher":[true/false],
+      "halal":[true/false]
+    }
+  }
+  
+  IMPORTANT: Never return empty arrays. Arrays must contain at least one item, even if it's just a placeholder message. All fields must have a value - use 'N/A' for unknown text, 0 for unknown numbers, and false for unknown booleans. Response must be valid JSON only.`;
+
+  return handleAIRequest(prompt, res);
 });
 
+// Endpoint for food certifications
+exports.getFoodCertifications = onRequest({ cors: true }, async (req, res) => {
+  const { foodName, foodBrand } = req.query;
+
+  if (!foodName || !foodBrand) {
+    return res.status(400).json({ error: "Missing food name or brand." });
+  }
+
+  const prompt = `You are a precise JSON generator focused on food certifications. For ${foodName} by ${foodBrand}, search for official certifications and generate a single, valid JSON object. Format must be exactly:
+  {
+    "product": {
+      "name": "${foodName}",
+      "brand": "${foodBrand}",
+      "matched_product": "[Exact match or closest similar product or 'N/A']"
+    },
+    "certifications": [
+      {
+        "name": "[Certification name]",
+        "verified": [true/false],
+        "details": "[Verification details or 'Not certified']",
+        "category": "[One of: Organic, Safety, Quality, Ethical, Dietary, Environmental, Animal Welfare]",
+        "verifying_body": "[Organization name or 'N/A']"
+      }
+    ]
+  }
+
+  Search specifically for these certifications:
+  
+  Organic Certifications:
+  - USDA Organic
+  - EU Organic
+  - Canada Organic
+  - JAS Organic (Japan)
+  - Bio Suisse
+  - Demeter
+  
+  Safety & Quality:
+  - HACCP
+  - GFSI
+  - SQF
+  - BRCGS
+  - ISO 22000
+  - FSSC 22000
+  - USDA Grade A/B
+  
+  Sustainability & Ethical:
+  - Rainforest Alliance
+  - Fair Trade Certified
+  - Food Justice Certified
+  - Regenerative Organic
+  
+  Animal & Marine:
+  - Certified Humane
+  - Animal Welfare Approved
+  - Marine Stewardship Council (MSC)
+  - Aquaculture Stewardship Council (ASC)
+  
+  Dietary & Allergen:
+  - Non-GMO Project Verified
+  - Gluten-Free (GFCO)
+  - Whole30 Approved
+  - Kosher (OU, Star-K, etc.)
+  - Halal (IFANCA, etc.)
+  - Paleo Certified
+  - Vegan Certified
+  
+  Product-Specific:
+  - A2 Milk Certified
+  - Real California Milk
+
+  IMPORTANT RULES:
+  1. Always include at least one certification in the array
+  2. If no certifications found, include {"name": "No certifications found", "verified": false, "details": "No verified certifications available", "category": "N/A", "verifying_body": "N/A"}
+  3. For each found certification, verify against official certification databases where possible
+  4. Include specific verifying body names when available
+  5. Set verified=true only when there's concrete evidence of current certification
+  6. Response must be valid JSON only
+  7. Never return empty arrays
+
+  Focus on current, verifiable certifications from official sources only. No speculation.`;
+
+  return handleAIRequest(prompt, res);
+});
+
+// Debug endpoint for testing prompts
 exports.debugAI = onRequest({ cors: true }, async (req, res) => {
+  const { prompt } = req.query;
+
+  if (!prompt) {
+    return res.status(400).json({ error: "Missing prompt parameter" });
+  }
+
   try {
-    const { prompt } = req.query;
-
-    if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt parameter" });
-    }
-
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-
     return res.json({
       success: true,
-      prompt: prompt,
-      response: response.text(),
+      response: (await result.response).text(),
     });
   } catch (error) {
-    console.error("Debug Error:", error);
     return res.status(500).json({
-      error: "Debug API failed",
-      details: error.message,
-    });
-  }
-});
-
-exports.getFoodCertifications = onRequest({ cors: true }, async (req, res) => {
-  try {
-    const { foodName, foodBrand } = req.query;
-
-    if (!foodName || !foodBrand) {
-      return res.status(400).json({ error: "Missing food name or brand" });
-    }
-
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-        // generated by chatgpt from original
-        const prompt = `Return ONLY a raw JSON object analyzing certifications for the product "${foodName}" by the brand "${foodBrand}". 
-
-Research and verify the following certifications:
-- USDA Organic: USDA certified organic production
-- Non-GMO Project Verified: Independently verified GMO-free
-- Cage-Free: Applicable for egg/poultry products
-- Free-Range: Animals must have outdoor access
-- Pasture-Raised: Animals are primarily raised outdoors
-- Certified Humane: Meets humane animal treatment standards
-- Fair Trade Certified: Ensures fair labor and sustainable practices
-- Grass-Fed: Applicable for meat/dairy products
-- No Added Hormones: No synthetic hormone use
-- rBST-Free: Specific to dairy products
-- Vegan Certified: Contains no animal products
-- Gluten-Free Certified: Meets gluten-free standards
-- Kosher: Meets Jewish dietary laws
-- Halal: Meets Islamic dietary laws
-- Regenerative Organic Certified: Meets soil health and welfare standards
-
-Format the output as follows:
-{
-  "product": {
-    "name": "${foodName}",
-    "brand": "${foodBrand}"
-  },
-  "certifications": [
-    {
-      "name": "Certification Name",
-      "verified": boolean,
-      "details": "Specific verification details, including dates and certifying body",
-      "evidence": "Link to verification or explanation of status"
-    }
-  ]
-}
-
-Be factual and specific. Do not include markdown, code blocks, backticks, or explanations.
-
-If there are no results for either the brand name or food name, search for similar names that may have resulted from misspellings or formatting errors, considering both the brand and food names in your search.`
-
-            /*
-    const prompt = `Return ONLY a raw JSON object analyzing certifications for ${foodName} by ${foodBrand}.
-    Research and verify each certification:
-    - USDA Organic (USDA certified organic production)
-    - Non-GMO Project Verified (independently verified GMO-free)
-    - Cage-Free (for egg/poultry products)
-    - Free-Range (animals have outdoor access)
-    - Pasture-Raised (animals primarily raised outdoors)
-    - Certified Humane (meets humane animal treatment standards)
-    - Fair Trade Certified (meets fair labor and sustainable practices)
-    - Grass-Fed (for meat/dairy products)
-    - No Added Hormones (no synthetic hormone use)
-    - rBST-Free (for dairy products)
-    - Vegan Certified (contains no animal products)
-    - Gluten-Free Certified (meets gluten-free standards)
-    - Kosher (meets Jewish dietary laws)
-    - Halal (meets Islamic dietary laws)
-    - Regenerative Organic Certified (meets soil health and welfare standards)
-
-    Format as:
-    {
-      "product": {
-        "name": "${foodName}",
-        "brand": "${foodBrand}"
-      },
-      "certifications": [
-        {
-          "name": "certification name",
-          "verified": boolean,
-          "details": "specific verification details including dates and certifying body",
-          "evidence": "link to verification or explanation of status"
-        }
-      ]
-    }
-    Be factual and specific. No markdown, no code blocks, no backticks, no explanation.
-    furthermore, if either the brand name or food name has no result, look for similar that may have resulted from a misspelling or misformatting, 
-    take the name of the brand in account for the name of the food as well`;
-        */
-
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-
-    // Clean the response
-    const text = response
-      .text()
-      .replace(/```json\n|```/g, "")
-      .replace(/\n/g, "")
-      .trim();
-
-    try {
-      const parsed = JSON.parse(text);
-      return res.json(parsed);
-    } catch (parseError) {
-      console.error("Raw text received:", text);
-      return res.status(500).json({
-        error: "Failed to parse AI response",
-        details: parseError.message,
-      });
-    }
-  } catch (error) {
-    console.error("Error getting certifications:", error);
-    return res.status(500).json({
-      error: "Failed to get food certifications",
+      error: "Debug failed",
       details: error.message,
     });
   }
