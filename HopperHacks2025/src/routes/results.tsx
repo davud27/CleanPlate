@@ -7,6 +7,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 // Example data structure
 const foodItems = [
@@ -179,11 +180,11 @@ function FoodItemCard({
   productBrand: string;
 }) {
   return (
-    <div className="flex gap-8">
+    <div className="flex gap-8 animate-fadeIn">
       {/* Left Sidebar */}
-      <div className="w-1/3 space-y-6">
-        <section className="bg-white/80 rounded-lg p-6 shadow-lg">
-          <h1 className="text-4xl font-bold text-[#2E7D32] mb-2">
+      <div className="w-1/3 space-y-6 animate-slideIn">
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:animate-glowPulse">
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] animate-rainbow">
             {productBrand} - {productName}
           </h1>
           <p className="text-[#37474F]/70 text-xl">Product Details</p>
@@ -196,15 +197,14 @@ function FoodItemCard({
 
       {/* Right Content */}
       <div className="w-2/3 space-y-8">
-        {/* Analysis Title */}
-        <section className="text-center">
+        <section className="text-center animate-fadeDown">
           <h2 className="text-3xl font-bold text-[#2E7D32] mb-2">
             Product Analysis Results
           </h2>
         </section>
 
-        {/* Risks Section */}
-        <section className="bg-white/80 rounded-lg p-6 shadow-lg">
+        {/* Risks Section with hover effects */}
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-slideUpFade [animation-delay:400ms] transform hover:scale-[1.02]">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="text-amber-600" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">
@@ -224,7 +224,7 @@ function FoodItemCard({
         </section>
 
         {/* Benefits Section */}
-        <section className="bg-white/80 rounded-lg p-6 shadow-lg">
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-slideUpFade [animation-delay:600ms] transform hover:scale-[1.02]">
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="text-green-600" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">Benefits</h2>
@@ -241,8 +241,8 @@ function FoodItemCard({
           </ul>
         </section>
 
-        {/* Recommendations Section */}
-        <section className="bg-white/80 rounded-lg p-6 shadow-lg">
+        {/* Recommendations with interactive cards */}
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:800ms]">
           <div className="flex items-center gap-2 mb-4">
             <Star className="text-yellow-500" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">
@@ -258,7 +258,7 @@ function FoodItemCard({
                   product: alternative.name,
                   productBrand: alternative.id,
                 }}
-                className="block bg-blue-50 p-4 rounded-md transition-all hover:bg-blue-100"
+                className="block bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               >
                 <h3 className="font-semibold text-blue-800">
                   {alternative.name}
