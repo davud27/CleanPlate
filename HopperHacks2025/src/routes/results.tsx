@@ -7,7 +7,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
+//import { motion } from "framer-motion";
 
 // Example data structure
 const foodItems = [
@@ -203,8 +203,8 @@ function FoodItemCard({
           </h2>
         </section>
 
-        {/* Risks Section with hover effects */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-slideUpFade [animation-delay:400ms] transform hover:scale-[1.02]">
+        {/* Risks Section - removed hover effects */}
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:400ms]">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="text-amber-600" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">
@@ -223,8 +223,8 @@ function FoodItemCard({
           </ul>
         </section>
 
-        {/* Benefits Section */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 animate-slideUpFade [animation-delay:600ms] transform hover:scale-[1.02]">
+        {/* Benefits Section - removed hover effects */}
+        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:600ms]">
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="text-green-600" size={24} />
             <h2 className="text-2xl font-bold text-[#37474F]">Benefits</h2>
@@ -284,8 +284,8 @@ function RouteComponent() {
 
   if (!product || !productBrand) {
     return (
-      <div className="min-h-screen bg-[#FAF3E0] p-8">
-        <div className="max-w-4xl mx-auto space-y-8 pt-16">
+      <div className="min-h-screen pt-28 bg-[#FAF3E0] p-8">
+        <div className="max-w-4xl mx-auto space-y-8">
           <section className="text-center">
             <h1 className="text-4xl font-bold text-[#2E7D32] mb-2">
               No product selected
@@ -297,8 +297,8 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF3E0] p-8">
-      <div className="max-w-7xl mx-auto pt-16">
+    <div className="min-h-screen pt-28 bg-[#FAF3E0] p-8">
+      <div className="max-w-7xl mx-auto">
         <FoodItemCard
           item={foodItems[0]}
           productName={product}

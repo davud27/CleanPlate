@@ -36,7 +36,7 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF3E0] via-[#F5EBD6] to-[#FAF3E0] relative overflow-hidden">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-[#FAF3E0] via-[#F5EBD6] to-[#FAF3E0] relative overflow-hidden">
       {/* Abstract background shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-[#2E7D32]/5 rounded-full blur-3xl"></div>
