@@ -5,6 +5,8 @@ import { AlternativesSection } from "@/components/ProductAnalysis/AlternativesSe
 import { ProductDetails } from "@/components/ProductAnalysis/ProductDetails";
 import { LabelExplanations } from "@/components/ProductAnalysis/LabelExplanations";
 import { NutritionLabel } from "@/components/ProductAnalysis/NutritionLabel";
+import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 
 // Example data structure - this could come from an API or database
 const foodItems = {
@@ -38,6 +40,12 @@ const foodItems = {
   ],
 };
 
+interface FoodData {
+  foodInfo: any;
+  nutritionInfo: any;
+  certifications: any;
+}
+
 export const Route = createFileRoute("/results")({
   validateSearch: (search: Record<string, unknown>) => {
     return {
@@ -45,66 +53,120 @@ export const Route = createFileRoute("/results")({
       productBrand: String(search.productBrand || ""),
     };
   },
-  component: RouteComponent,
+  component: Results,
 });
 
-function RouteComponent() {
+function Results() {
   const { product, productBrand } = Route.useSearch();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [foodData, setFoodData] = useState<FoodData | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedData = localStorage.getItem("foodData");
+
+      if (!storedData) {
+        console.error("No food data found in localStorage");
+        navigate({ to: "/" });
+        return;
+      }
+
+      const parsedData = JSON.parse(storedData);
+
+      // Validate the parsed data
+      if (
+        !parsedData.foodInfo ||
+        !parsedData.nutritionInfo ||
+        !parsedData.certifications
+      ) {
+        console.error("Invalid food data structure");
+        navigate({ to: "/" });
+        return;
+      }
+
+      setFoodData(parsedData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error loading food data:", error);
+      setError("Failed to load analysis results");
+      setLoading(false);
+    }
+  }, [navigate]);
 
   if (!product || !productBrand) {
     return (
-      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <section className="text-center">
-            <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-2">
-              No product selected
-            </h1>
-          </section>
+      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-red-600">
+            No product selected
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-[#2E7D32]">
+            Loading analysis...
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !foodData) {
+    return (
+      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl font-bold text-red-600">
+            {error || "Failed to load analysis results"}
+          </h1>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex gap-8 animate-fadeIn">
-          {/* Left Sidebar */}
-          <div className="w-1/3 space-y-6 animate-slideIn">
-            <ProductDetails productName={product} productBrand={productBrand} />
-            <NutritionLabel />
+    <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Product Details */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Product Details</h2>
+          <div className="mb-2">
+            <span className="font-semibold">Brand:</span> {productBrand}
           </div>
-
-          {/* Right Content */}
-          <div className="w-2/3 space-y-8">
-            <section className="text-center animate-fadeDown">
-              <h2 className="text-3xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-2">
-                Product Analysis Results
-              </h2>
-            </section>
-
-            <RisksSection risks={foodItems.risks} />
-            <BenefitsSection benefits={foodItems.benefits} />
-            <AlternativesSection alternatives={foodItems.alternatives} />
-            <LabelExplanations />
+          <div className="mb-4">
+            <span className="font-semibold">Product:</span> {product}
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+        </section>
 
-export default function Results() {
-  return (
-    <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto">
-        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
-          <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-4 transition-colors duration-200">
-            Results
-          </h1>
-          <div className="text-[#37474F] dark:text-gray-300 transition-colors duration-200">
-            {/* Results content */}
-          </div>
+        {/* Food Info Section */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Product Information</h2>
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(foodData.foodInfo, null, 2)}
+          </pre>
+        </section>
+
+        {/* Nutrition Info Section */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Nutrition Information</h2>
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(foodData.nutritionInfo, null, 2)}
+          </pre>
+        </section>
+
+        {/* Certifications Section */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4">Certifications</h2>
+          <pre className="whitespace-pre-wrap">
+            {JSON.stringify(foodData.certifications, null, 2)}
+          </pre>
         </section>
       </div>
     </div>

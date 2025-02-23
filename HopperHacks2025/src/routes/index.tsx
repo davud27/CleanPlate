@@ -1,12 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SearchForm } from "@/components/SearchForm";
 import { Features } from "@/components/Features";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
+interface FoodData {
+  foodInfo?: any;
+  nutritionInfo?: any;
+  certifications?: any;
+}
+
 function Index() {
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
     <div className="min-h-screen pt-20 bg-[#FAF3E0] dark:bg-gray-900 transition-colors duration-200">
       {/* Abstract background shapes */}
@@ -27,7 +36,7 @@ function Index() {
           </p>
         </div>
 
-        <SearchForm />
+        <SearchForm isLoading={isLoading} setIsLoading={setIsLoading} />
         <Features />
       </div>
     </div>
