@@ -53,10 +53,10 @@ export const Route = createFileRoute("/results")({
       productBrand: String(search.productBrand || ""),
     };
   },
-  component: Results,
+  component: RouteComponent,
 });
 
-function Results() {
+function RouteComponent() {
   const { product, productBrand } = Route.useSearch();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -136,7 +136,7 @@ function Results() {
       <div className="max-w-4xl mx-auto">
         {/* Product Details */}
         <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Product Details</h2>
+          <h2 className="text-2xl font-bold mb-4 text-[#2E7D32]">Product Details</h2>
           <div className="mb-2">
             <span className="font-semibold">Brand:</span> {productBrand}
           </div>
@@ -145,28 +145,108 @@ function Results() {
           </div>
         </section>
 
-        {/* Food Info Section */}
+        {/* Analysis Section */}
         <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Product Information</h2>
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(foodData.foodInfo, null, 2)}
-          </pre>
+          <h2 className="text-2xl font-bold mb-6 text-red-600">Safety Analysis</h2>
+          
+          {/* Contaminants */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-3 text-red-500">Known Contaminants</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              {foodData?.foodInfo?.analysis?.contaminants?.map((item, index) => (
+                <li key={index} className="text-gray-700 dark:text-gray-300">{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Health Concerns */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-3 text-orange-500">Health Concerns</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              {foodData?.foodInfo?.analysis?.healthConcerns?.map((item, index) => (
+                <li key={index} className="text-gray-700 dark:text-gray-300">{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Production Methods */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-3 text-blue-500">Production Methods</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              {foodData?.foodInfo?.analysis?.productionMethods?.map((item, index) => (
+                <li key={index} className="text-gray-700 dark:text-gray-300">{item}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Safety Record */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-3 text-yellow-600">Safety Record</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              {foodData?.foodInfo?.analysis?.safetyRecord?.map((item, index) => (
+                <li key={index} className="text-gray-700 dark:text-gray-300">{item}</li>
+              ))}
+            </ul>
+          </div>
         </section>
 
-        {/* Nutrition Info Section */}
+        {/* Nutrition Information */}
         <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Nutrition Information</h2>
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(foodData.nutritionInfo, null, 2)}
-          </pre>
+          <h2 className="text-2xl font-bold mb-6 text-green-600">Nutrition Information</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {foodData?.nutritionInfo?.nutrition && 
+              Object.entries(foodData.nutritionInfo.nutrition).map(([key, value]) => (
+                <div key={key} className="border-b border-gray-200 pb-2">
+                  <span className="font-semibold">{key.replace(/_/g, ' ').toUpperCase()}: </span>
+                  <span>{value}</span>
+                </div>
+              ))
+            }
+          </div>
         </section>
 
-        {/* Certifications Section */}
+        {/* Ingredients */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4 text-purple-600">Ingredients</h2>
+          <ul className="list-disc pl-6 space-y-2">
+            {foodData?.nutritionInfo?.ingredients?.map((ingredient, index) => (
+              <li key={index} className="text-gray-700 dark:text-gray-300">{ingredient}</li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Dietary Information */}
+        <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 mb-8 shadow-lg">
+          <h2 className="text-2xl font-bold mb-4 text-blue-600">Dietary Information</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {foodData?.nutritionInfo?.dietary_info && 
+              Object.entries(foodData.nutritionInfo.dietary_info).map(([key, value]) => (
+                <div key={key} className="flex items-center gap-2">
+                  {value ? 
+                    <span className="text-green-500">✓</span> : 
+                    <span className="text-red-500">✗</span>
+                  }
+                  <span className="capitalize">{key.replace(/_/g, ' ')}</span>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        {/* Certifications */}
         <section className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-          <h2 className="text-2xl font-bold mb-4">Certifications</h2>
-          <pre className="whitespace-pre-wrap">
-            {JSON.stringify(foodData.certifications, null, 2)}
-          </pre>
+          <h2 className="text-2xl font-bold mb-4 text-green-600">Certifications</h2>
+          <div className="grid grid-cols-2 gap-4">
+            {foodData?.certifications?.certifications?.map((cert, index) => (
+              <div key={index} className="flex items-center gap-2">
+                {cert.verified ? 
+                  <span className="text-green-500">✓</span> : 
+                  <span className="text-red-500">✗</span>
+                }
+                <span>{cert.name}</span>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     </div>
