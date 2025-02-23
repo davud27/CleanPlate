@@ -36,7 +36,9 @@ function Index() {
           </p>
         </div>
 
-        <SearchForm isLoading={isLoading} setIsLoading={setIsLoading} />
+        <div>
+          <SearchForm isLoading={isLoading} setIsLoading={setIsLoading} />
+        </div>
         <Features />
       </div>
     </div>
