@@ -16,7 +16,7 @@ const blogPosts = [
   },
   {
     title: "The Health Benefits of Choosing Organic Foods",
-    date: "March 12, 2024",
+    date: "-----",
     summary: "Organic products reduce public health risks by minimizing exposure to toxic chemicals in food, soil, air, and water. Discover how organic choices protect both consumers and farm workers.",
     link: "https://www.ota.com/health-benefits-organic",
     readTime: "5 min read",
@@ -40,7 +40,7 @@ const blogPosts = [
   },
   {
     title: "Why 100% Grass-Fed Beef Matters",
-    date: "------",
+    date: "-----",
     summary: "Learn about the three main benefits of choosing 100% grass-fed beef: humane treatment of animals, environmental sustainability, and superior nutritional value.",
     link: "https://foxhollow.com/blogs/blog/why-100-grassfed-matters",
     readTime: "5 min read",
