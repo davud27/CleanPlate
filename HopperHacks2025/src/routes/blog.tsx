@@ -50,7 +50,7 @@ const blogPosts = [
 
 export default function Blog() {
   return (
-    <div className="min-h-screen pt-20 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
+    <div className="min-h-screen pt-28 md:pt-32 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
       <div className="max-w-4xl mx-auto space-y-8">
         <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] transition-colors duration-200">
           Blog
