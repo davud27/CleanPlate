@@ -11,4 +11,23 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      "/api/getFoodInfo": {
+        target: "https://getfoodinfo-cmx325nlca-uc.a.run.app",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/getFoodInfo/, ""),
+      },
+      "/api/analyzeFoodProduct": {
+        target: "https://analyzefoodproduct-cmx325nlca-uc.a.run.app",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/analyzeFoodProduct/, ""),
+      },
+      "/api/getFoodCertifications": {
+        target: "https://getfoodcertifications-cmx325nlca-uc.a.run.app",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/getFoodCertifications/, ""),
+      },
+    },
+  },
 });
