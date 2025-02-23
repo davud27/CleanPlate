@@ -36,7 +36,7 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-br from-[#FAF3E0] via-[#F5EBD6] to-[#FAF3E0] relative overflow-hidden">
+    <div className="min-h-screen pt-20 bg-[#FAF3E0] dark:bg-gray-900 transition-colors duration-200">
       {/* Abstract background shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-[#2E7D32]/5 rounded-full blur-3xl"></div>
@@ -46,22 +46,22 @@ function Index() {
       <div className="relative max-w-4xl mx-auto py-20 px-6">
         {/* Hero Section */}
         <div className="text-center space-y-6 mb-16">
-          <h1 className="text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] leading-tight">
+          <h1 className="text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] leading-tight dark:text-[#4CAF50] transition-colors duration-200">
             Welcome to Clean Plate!
           </h1>
-          <p className="text-2xl text-[#37474F]/80 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-2xl text-[#37474F] dark:text-gray-300 max-w-2xl mx-auto leading-relaxed transition-colors duration-200">
             Make informed choices about your food with our comprehensive analysis tool
           </p>
         </div>
 
         {/* Search Form */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-white/20">
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-2xl p-10 border border-white/20 dark:bg-gray-800 dark:border-gray-700">
           <form onSubmit={handleSubmit} autoComplete="off" className="space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <label
                   htmlFor="brand"
-                  className="text-lg font-semibold text-[#37474F] block"
+                  className="text-lg font-semibold text-[#37474F] dark:text-gray-200 block"
                 >
                   Food Brand
                   <span className="text-[#4CAF50] ml-1">*</span>
@@ -73,14 +73,14 @@ function Index() {
                   placeholder="Enter food brand (e.g., Tyson)"
                   required
                   autoComplete="off"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white/50 backdrop-blur-sm placeholder:text-[#8D6E63]/40 text-lg"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 dark:border-gray-700 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white dark:bg-gray-800 text-[#37474F] dark:text-gray-200 placeholder:text-[#8D6E63]/40 text-lg"
                 />
               </div>
 
               <div className="space-y-4">
                 <label
                   htmlFor="foodName"
-                  className="text-lg font-semibold text-[#37474F] block"
+                  className="text-lg font-semibold text-[#37474F] dark:text-gray-200 block"
                 >
                   Food Name
                   <span className="text-[#4CAF50] ml-1">*</span>
@@ -92,7 +92,7 @@ function Index() {
                   placeholder="Enter food name (e.g., Chicken Nuggets)"
                   required
                   autoComplete="off"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white/50 backdrop-blur-sm placeholder:text-[#8D6E63]/40 text-lg"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 dark:border-gray-700 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white dark:bg-gray-800 text-[#37474F] dark:text-gray-200 placeholder:text-[#8D6E63]/40 text-lg"
                 />
               </div>
             </div>
@@ -100,7 +100,7 @@ function Index() {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer"
+                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] dark:from-[#4CAF50] dark:to-[#66BB6A] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer"
               >
                 Analyze Food
               </Button>

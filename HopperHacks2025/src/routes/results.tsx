@@ -138,10 +138,10 @@ function LabelExplanations() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <section className="bg-white/80 rounded-lg p-6 shadow-lg">
+    <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between text-[#2E7D32] hover:text-[#1B5E20] transition-colors"
+        className="w-full flex items-center justify-between text-[#2E7D32] dark:text-[#4CAF50] hover:text-[#1B5E20] transition-colors"
       >
         <h2 className="text-2xl font-bold">
           Common Food Labels & Their Definitions
@@ -154,12 +154,12 @@ function LabelExplanations() {
           {labelDefinitions.map((item, index) => (
             <div
               key={index}
-              className="border-b border-gray-200 last:border-0 pb-4 last:pb-0"
+              className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0"
             >
-              <h3 className="font-semibold text-[#2E7D32] mb-1">
+              <h3 className="font-semibold text-[#2E7D32] dark:text-[#4CAF50] mb-1">
                 {item.label}
               </h3>
-              <p className="text-[#37474F] text-sm leading-relaxed">
+              <p className="text-[#37474F] dark:text-gray-300 text-sm leading-relaxed">
                 {item.definition}
               </p>
             </div>
@@ -183,11 +183,11 @@ function FoodItemCard({
     <div className="flex gap-8 animate-fadeIn">
       {/* Left Sidebar */}
       <div className="w-1/3 space-y-6 animate-slideIn">
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg">
-          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] animate-rainbow">
-            {productBrand} - {productName}
-          </h1>
-          <p className="text-[#37474F]/70 text-xl">Product Details</p>
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
+        <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50]">
+         {productBrand} - {productName}
+        </h1>
+          <p className="text-[#37474F] dark:text-gray-300 text-xl">Product Details</p>
           {/* Image placeholder */}
           <div className="mt-6 aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
             <p className="text-gray-500">Product Image</p>
@@ -195,8 +195,8 @@ function FoodItemCard({
         </section>
 
         {/* Nutrition Label */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-bold text-[#37474F] mb-4 border-b-2 pb-2">Nutrition Facts</h2>
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
+          <h2 className="text-xl font-bold text-[#37474F] dark:text-gray-300 mb-4 border-b-2 pb-2">Nutrition Facts</h2>
           <div className="space-y-4">
             <div className="border-b pb-2">
               <p className="font-bold">Serving Size 1 cup (228g)</p>
@@ -263,7 +263,7 @@ function FoodItemCard({
             {/* Added Ingredients Section */}
             <div className="border-t pt-4 mt-4">
               <p className="font-bold text-lg mb-2">Ingredients</p>
-              <p className="text-sm leading-relaxed text-[#37474F]">
+              <p className="text-sm leading-relaxed text-[#37474F] dark:text-gray-300">
                 Organic Grade A Milk, Vitamin D3, Vitamin A Palmitate, Organic Valley Pasteurized Milk, Organic Valley Homogenized Milk, Organic Valley Whole Milk, Organic Valley Cream, Organic Valley Skim Milk, Organic Valley Nonfat Milk, Organic Valley Low-Fat Milk, Organic Valley 2% Milk, Organic Valley 1% Milk, Organic Valley Half & Half, Organic Valley Heavy Cream, Organic Valley Light Cream, Organic Valley Buttermilk, Organic Valley Sour Cream, Organic Valley Yogurt, Organic Valley Butter, Organic Valley Cheese, Organic Valley Ice Cream
               </p>
             </div>
@@ -274,16 +274,16 @@ function FoodItemCard({
       {/* Right Content */}
       <div className="w-2/3 space-y-8">
         <section className="text-center animate-fadeDown">
-          <h2 className="text-3xl font-bold text-[#2E7D32] mb-2">
+          <h2 className="text-3xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-2">
             Product Analysis Results
           </h2>
         </section>
 
         {/* Risks Section - removed hover effects */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:400ms]">
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:400ms] transition-colors duration-200">
           <div className="flex items-center gap-2 mb-4">
             <AlertTriangle className="text-amber-600" size={24} />
-            <h2 className="text-2xl font-bold text-[#37474F]">
+            <h2 className="text-2xl font-bold text-[#37474F] dark:text-gray-300">
               Risks to Consider
             </h2>
           </div>
@@ -300,10 +300,10 @@ function FoodItemCard({
         </section>
 
         {/* Benefits Section - removed hover effects */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:600ms]">
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:600ms] transition-colors duration-200">
           <div className="flex items-center gap-2 mb-4">
             <CheckCircle className="text-green-600" size={24} />
-            <h2 className="text-2xl font-bold text-[#37474F]">Benefits</h2>
+            <h2 className="text-2xl font-bold text-[#37474F] dark:text-gray-300">Benefits</h2>
           </div>
           <ul className="space-y-3">
             {item.benefits.map((benefit, index) => (
@@ -318,10 +318,10 @@ function FoodItemCard({
         </section>
 
         {/* Recommendations with interactive cards */}
-        <section className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:800ms]">
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg animate-slideUpFade [animation-delay:800ms] transition-colors duration-200">
           <div className="flex items-center gap-2 mb-4">
             <Star className="text-yellow-500" size={24} />
-            <h2 className="text-2xl font-bold text-[#37474F]">
+            <h2 className="text-2xl font-bold text-[#37474F] dark:text-gray-300">
               Recommended Alternatives
             </h2>
           </div>
@@ -336,10 +336,10 @@ function FoodItemCard({
                 }}
                 className="block bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-md transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
               >
-                <h3 className="font-semibold text-blue-800">
+                <h3 className="font-semibold text-blue-800 dark:text-blue-200">
                   {alternative.name}
                 </h3>
-                <p className="text-blue-600 mt-1 text-sm">
+                <p className="text-blue-600 dark:text-blue-300 mt-1 text-sm">
                   {alternative.reason}
                 </p>
               </Link>
@@ -360,10 +360,10 @@ function RouteComponent() {
 
   if (!product || !productBrand) {
     return (
-      <div className="min-h-screen pt-28 bg-[#FAF3E0] p-8">
+      <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
         <div className="max-w-4xl mx-auto space-y-8">
           <section className="text-center">
-            <h1 className="text-4xl font-bold text-[#2E7D32] mb-2">
+            <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-2">
               No product selected
             </h1>
           </section>
@@ -373,13 +373,30 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen pt-28 bg-[#FAF3E0] p-8">
+    <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
       <div className="max-w-7xl mx-auto">
         <FoodItemCard
           item={foodItems[0]}
           productName={product}
           productBrand={productBrand}
         />
+      </div>
+    </div>
+  );
+}
+
+export default function Results() {
+  return (
+    <div className="min-h-screen pt-28 bg-[#FAF3E0] dark:bg-gray-900 p-8 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto">
+        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg transition-colors duration-200">
+          <h1 className="text-4xl font-bold text-[#2E7D32] dark:text-[#4CAF50] mb-4 transition-colors duration-200">
+            Results
+          </h1>
+          <div className="text-[#37474F] dark:text-gray-300 transition-colors duration-200">
+            {/* Results content */}
+          </div>
+        </section>
       </div>
     </div>
   );
