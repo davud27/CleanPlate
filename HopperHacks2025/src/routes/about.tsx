@@ -44,11 +44,6 @@ export default function About() {
             and more ethical food system.
           </p>
         </section>
-
-        <section>
-          <h2 className="text-3xl font-bold text-[#2E7D32] mb-4">AI Chat</h2>
-          <AiChat />
-        </section>
       </div>
     </div>
   );

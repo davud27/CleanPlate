@@ -89,7 +89,7 @@ function Index() {
                   id="foodName"
                   value={foodName}
                   onChange={(e) => setFoodName(e.target.value)}
-                  placeholder="Enter food name (e.g., chicken nuggets)"
+                  placeholder="Enter food name (e.g., Chicken Nuggets)"
                   required
                   autoComplete="off"
                   className="w-full px-4 py-3 rounded-xl border-2 border-[#8D6E63]/20 focus:border-[#4CAF50] focus:ring-[#4CAF50]/20 focus:ring-4 transition-all duration-300 bg-white/50 backdrop-blur-sm placeholder:text-[#8D6E63]/40 text-lg"
