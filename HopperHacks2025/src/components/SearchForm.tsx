@@ -3,29 +3,130 @@ import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export function SearchForm() {
+interface SearchFormProps {
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
+}
+
+export function SearchForm({ isLoading, setIsLoading }: SearchFormProps) {
   const [foodBrand, setFoodBrand] = useState("");
   const [foodName, setFoodName] = useState("");
 
-  const navigate = useNavigate();
+Search]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!foodBrand.trim() || !foodName.trim()) return;
 
-    if (!foodBrand.trim() || !foodName.trim()) {
-      return;
+    setIsLoading(true);
+
+    try {
+      console.log("Sending request for:", { foodName, foodBrand });
+
+      const [foodInfoRes, nutritionRes, certificationsRes] = await Promise.all([
+        fetch(
+          `/api/getFoodInfo?foodName=${encodeURIComponent(foodName)}&foodBrand=${encodeURIComponent(foodBrand)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        ),
+        fetch(
+          `/api/analyzeFoodProduct?foodName=${encodeURIComponent(foodName)}&foodBrand=${encodeURIComponent(foodBrand)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        ),
+        fetch(
+          `/api/getFoodCertifications?foodName=${encodeURIComponent(foodName)}&foodBrand=${encodeURIComponent(foodBrand)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        ),
+      ]);
+
+      // Log responses
+      console.log("Response status codes:", {
+        foodInfo: foodInfoRes.status,
+        nutrition: nutritionRes.status,
+        certifications: certificationsRes.status,
+      });
+
+      // Check each response individually
+      if (!foodInfoRes.ok) {
+        const errorText = await foodInfoRes.text();
+        console.error("Food info error:", errorText);
+        throw new Error(`Food info request failed: ${foodInfoRes.status}`);
+      }
+      if (!nutritionRes.ok) {
+        const errorText = await nutritionRes.text();
+        console.error("Nutrition error:", errorText);
+        throw new Error(`Nutrition request failed: ${nutritionRes.status}`);
+      }
+      if (!certificationsRes.ok) {
+        const errorText = await certificationsRes.text();
+        console.error("Certifications error:", errorText);
+        throw new Error(
+          `Certifications request failed: ${certificationsRes.status}`
+        );
+      }
+
+      const [foodInfo, nutritionInfo, certifications] = await Promise.all([
+        foodInfoRes.json(),
+        nutritionRes.json(),
+        certificationsRes.json(),
+      ]);
+
+      // Log the received data
+      console.log("Received data:", {
+        foodInfo,
+        nutritionInfo,
+        certifications,
+      });
+
+      if (!foodInfo || !nutritionInfo || !certifications) {
+        throw new Error("Invalid data received from API");
+      }
+
+      const foodData = {
+        foodInfo,
+        nutritionInfo,
+        certifications,
+      };
+
+      localStorage.setItem("foodData", JSON.stringify(foodData));
+
+      // Small delay to ensure localStorage is updated
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      navigate({
+        to: "/results",
+        search: {
+          product: foodName,
+          productBrand: foodBrand,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to analyze food product. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+      setFoodBrand("");
+      setFoodName("");
     }
-
-    setFoodBrand("");
-    setFoodName("");
-
-    navigate({
-      to: "/results",
-      search: {
-        product: foodName,
-        productBrand: foodBrand,
-      },
-    });
   };
 
   return (
@@ -74,9 +175,38 @@ export function SearchForm() {
         <div className="flex justify-center pt-6">
           <Button
             type="submit"
-            className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] dark:from-[#4CAF50] dark:to-[#66BB6A] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer"
+            disabled={isLoading}
+            className={`bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] dark:from-[#4CAF50] dark:to-[#66BB6A] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer flex items-center gap-2 ${
+              isLoading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Analyze Food
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span>Analyzing...</span>
+              </>
+            ) : (
+              "Analyze Food"
+            )}
           </Button>
         </div>
       </form>

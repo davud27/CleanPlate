@@ -13,6 +13,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
+
       "/api/analyzeFoodProduct": {
         target: "https://analyzefoodproduct-cmx325nlca-uc.a.run.app",
         changeOrigin: true,
