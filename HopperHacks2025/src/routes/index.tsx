@@ -36,7 +36,7 @@ function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#FAF3E0] via-[#F5EBD6] to-[#FAF3E0] relative overflow-hidden">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-[#FAF3E0] via-[#F5EBD6] to-[#FAF3E0] relative overflow-hidden">
       {/* Abstract background shapes */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-[#2E7D32]/5 rounded-full blur-3xl"></div>
@@ -100,7 +100,7 @@ function Index() {
             <div className="flex justify-center pt-6">
               <Button 
                 type="submit"
-                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
+                className="bg-gradient-to-r from-[#2E7D32] to-[#4CAF50] text-white text-xl px-12 py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold cursor-pointer"
               >
                 Analyze Food
               </Button>
