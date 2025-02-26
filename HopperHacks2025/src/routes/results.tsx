@@ -640,6 +640,52 @@ function FoodItemCard({
           </div>
         </section>
 
+        {nutritionData && (
+          <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="border-b-8 border-black dark:border-gray-200 pb-1">
+              <h2 className="text-3xl font-extrabold text-black dark:text-white">Nutrition Facts</h2>
+            </div>
+            
+            <div className="border-b border-black dark:border-gray-200 py-2">
+              <p className="text-sm text-black dark:text-white">
+                {nutritionData.general_nutrition_info.typical_nutrients}
+              </p>
+            </div>
+
+            <div className="border-b-4 border-black dark:border-gray-200 py-2">
+              <h3 className="text-sm font-bold text-black dark:text-white">Nutritional Benefits</h3>
+              <p className="text-sm text-black dark:text-white">
+                {nutritionData.general_nutrition_info.nutritional_benefits}
+              </p>
+            </div>
+
+            <div className="border-b border-black dark:border-gray-200 py-2">
+              <h3 className="text-sm font-bold text-black dark:text-white">Common Ingredients</h3>
+              <p className="text-sm text-black dark:text-white">
+                {nutritionData.common_ingredients.typical_ingredients}
+              </p>
+            </div>
+
+            <div className="border-b border-black dark:border-gray-200 py-2">
+              <h3 className="text-sm font-bold text-black dark:text-white">Allergens</h3>
+              <p className="text-sm text-black dark:text-white">
+                {nutritionData.common_ingredients.common_allergens}
+              </p>
+            </div>
+
+            <div className="py-2">
+              <h3 className="text-sm font-bold text-black dark:text-white">Dietary Considerations</h3>
+              <p className="text-sm text-black dark:text-white">
+                {nutritionData.dietary_considerations.general_suitability}
+              </p>
+            </div>
+
+            <div className="mt-4 text-xs italic text-gray-600 dark:text-gray-400">
+              {nutritionData.dietary_considerations.disclaimer}
+            </div>
+          </section>
+        )}
+
         <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-100 dark:border-gray-700">
           <div className="flex items-center gap-2 mb-6">
             <AlertTriangle className="text-amber-600" size={24} />
@@ -657,41 +703,6 @@ function FoodItemCard({
         {certificationData && (
           <CertificationSection certificationData={certificationData} />
         )}
-
-        <section className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-          <h2 className="text-xl font-bold mb-4 pb-2 border-b-2 border-gray-200 dark:border-gray-700">
-            Nutrition Facts
-          </h2>
-          {nutritionData && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#2E7D32] dark:text-[#4CAF50]">
-                  Key Nutrients
-                </h3>
-                <p className="text-sm">
-                  {nutritionData.general_nutrition_info.typical_nutrients}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="font-semibold text-[#2E7D32] dark:text-[#4CAF50]">
-                  Benefits
-                </h3>
-                <p className="text-sm">
-                  {nutritionData.general_nutrition_info.nutritional_benefits}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-md">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    {nutritionData.dietary_considerations.disclaimer}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
       </div>
     </div>
   );
